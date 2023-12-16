@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# Script Name: xpm
+
+# Functions to check the environment
+
+is_npm() {
+	if [ -f "package-lock.json" ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+is_pnpm() {
+	if [ -f "pnpm-lock.yaml" ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+is_yarn() {
+	if [ -f "yarn.lock" ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+function install_package() {
+	if [ is_npm ]; then
+		echo "Installing with npm."
+		npm install "$@"
+	elif [ is_yarn ]; then
+		echo "installing with yarn"
+		yarn install "$@"
+	elif [ is_pnpm ]; then
+		echo  "install with pnpm"
+		pnpm install "$@"
+	else
+		echo "No package manager found. Please use your package manager to install directly"
+	fi
+}
+
+function run_script() {
+	if [ is_npm ]; then
+		echo "running $1 with npm."
+		npm run "$@"
+	elif [ is_yarn ]; then
+		echo "running $1 with yarn"
+		yarn "$@"
+	elif [ is_pnpm ]; then
+		echo "running $1 with pnpm"
+		pnpm "$@"
+	fi	
+}
+
+
+
+if [ $# -eq 0 ]; then
+	echo "No command given"
+fi
+
+if [ "$1" == "install" ]; then
+	install_package "${@:2}"
+else
+	run_script "$@"
+fi
+
+
